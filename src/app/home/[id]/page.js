@@ -132,7 +132,9 @@ const MoviePage = ({ params }) => {
           <Title level={2} style={{ color: "black", margin: "0px" }}>
             keywords:{"  "}
             {data2?.map((movie, index) => (
-              <Tag color="default">{movie?.name}</Tag>
+              <Tag key={movie?.name} color="default">
+                {movie?.name}
+              </Tag>
             ))}
           </Title>
         </Col>
