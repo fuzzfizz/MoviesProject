@@ -21,7 +21,7 @@ const App = () => {
     <>
       <h1>Movies</h1>
       {array.map((item) => (
-        <CardImage src={item.src} title={item.title}>
+        <CardImage key={item?.src} src={item.src} title={item.title}>
           <input type="button" value="Bookmark" />
         </CardImage>
       ))}
