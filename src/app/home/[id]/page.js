@@ -171,7 +171,7 @@ const MoviePage = ({ params }) => {
           <Title level={2}>Related:</Title>
           <Row justify="center" gutter={[16, 16]} style={{ width: "100%" }}>
             {data3.slice(1, 5).map((movie, index) => (
-              <Col span={6} key={index}>
+              <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6} key={index}>
                 <CardImage
                   title={movie.title}
                   Image={movie.poster_path}
