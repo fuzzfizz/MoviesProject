@@ -1,30 +1,9 @@
 "use client";
-import { Form, Input, InputNumber } from "antd";
-import React, { useState } from "react";
+import { Form, Input, Button } from "antd";
+import { useState, useEffect } from "react";
+import API from "@/libs/API";
 
 const AddMoviePage = () => {
-  const [title, setTitle] = useState("");
-  const [genre, setGenre] = useState("");
-  const [releaseYear, setReleaseYear] = useState("");
-
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleGenreChange = (e) => {
-    setGenre(e.target.value);
-  };
-
-  const handleReleaseYearChange = (e) => {
-    setReleaseYear(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your logic here to handle the form submission
-    console.log("Form submitted!");
-  };
-
   const formcss = {
     height: "50%",
     border: "0px solid #000",
@@ -33,6 +12,22 @@ const AddMoviePage = () => {
     borderRadius: "10px",
     boxShadow: "0px 1px 15px 0 #ffffff",
     backgroundColor: "whitesmoke",
+  };
+
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      await API.post("/api/movies", values);
+      form.resetFields(); // เคลียร์ฟอร์มหลังจากส่งข้อมูลสำเร็จ
+      setLoading(false);
+      console.log("Movie added successfully!");
+    } catch (error) {
+      console.error("Error adding movie:", error);
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,43 +41,72 @@ const AddMoviePage = () => {
     >
       <div style={formcss}>
         <h1>Add Movie</h1>
-        <Form style={{}} onSubmit={handleSubmit}>
-          <Form.Item
-            label="ID"
-            name="id"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <br />
+        <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             label="Title"
-            name="id"
+            name="title"
             rules={[
               {
                 required: true,
+                message: "Please input the title!",
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <br />
           <Form.Item
-            label="ID"
-            name="id"
+            label="Overview"
+            name="overview"
             rules={[
               {
                 required: true,
+                message: "Please input the overview!",
+              },
+            ]}
+          >
+            <Input.TextArea />
+          </Form.Item>
+          <Form.Item
+            label="Release Date"
+            name="release_date"
+            rules={[
+              {
+                required: true,
+                message: "Please input the release date!",
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <br />
+          <Form.Item
+            label="Popularity"
+            name="popularity"
+            rules={[
+              {
+                required: true,
+                message: "Please input the popularity!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Poster Path"
+            name="poster_path"
+            rules={[
+              {
+                required: true,
+                message: "Please input the poster path!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Add Movie
+            </Button>
+          </Form.Item>
         </Form>
       </div>
     </div>
