@@ -9,6 +9,9 @@ import API from "@/libs/API";
 const App = () => {
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12; // จำนวนรายการต่อหน้า
+
   const getData = async () => {
     const result = await API.get("/api/movies");
     setData(result.data);
@@ -30,6 +33,13 @@ const App = () => {
     backgroundColor: "",
   };
 
+    const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <div style={{ backgroundColor: "white", padding: "2rem" }}>
       <main
@@ -42,10 +52,10 @@ const App = () => {
         <Row
           justify="center"
           gutter={[16, 16]}
-          style={{ flexWrap: "wrap", width: "75%" }}
+          style={{ flexWrap: "wrap", width: "80%" }}
         >
-          {data.map((movie, index) => (
-            <Col span={6} key={index}>
+          {currentItems.map((movie, index) => (
+            <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6} key={index}>
               <CardImage
                 title={movie.title}
                 Image={movie.poster_path}
@@ -54,9 +64,22 @@ const App = () => {
               />
             </Col>
           ))}
-          <Pagination defaultCurrent={1} total={10} />
+          <Pagination
+              current={currentPage}
+              total={data.length}
+              pageSize={itemsPerPage}
+              onChange={handlePageChange}
+              showQuickJumper
+              style={{
+                width: "100%",
+                textAlign: "center",
+                padding: "20px",
+              }}
+              position="top"
+            />
         </Row>
-        <Sider width="25%" style={siderStyle}>
+        
+        <Sider width="20%" style={siderStyle}>
           <Row>
             <Col span={4}>
               <h2>Category:</h2>
