@@ -41,10 +41,13 @@ const Admin = () => {
     getData();
   }, []);
 
-  const handleEdit = async () => {
+  const handleEdit = async (id) => {
     try {
       const values = await form.validateFields();
-      await updateData(selectedRecord.id, values);
+      values.vote_average *= 2; // คูณค่า vote_average ด้วย 2
+
+      // console.log(id._id,"id",values,"values");
+      await updateData(id._id, values);
       setVisible(false);
       form.resetFields();
     } catch (error) {
@@ -109,7 +112,7 @@ const Admin = () => {
         <Modal
           title="Edit Movie"
           visible={visible}
-          onOk={handleEdit}
+          onOk={e => { handleEdit(selectedRecord) }}
           onCancel={() => setVisible(false)}
         >
           <Form form={form} initialValues={selectedRecord}>
@@ -134,7 +137,7 @@ const Admin = () => {
               name="vote_average"
               rules={[{ required: true, message: "Please input the vote!" }]}
             >
-              <Rate />
+              <Rate defaultValue={selectedRecord ? selectedRecord.vote_average / 2 : 0} />
             </Form.Item>
           </Form>
         </Modal>

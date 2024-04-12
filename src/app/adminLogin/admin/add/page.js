@@ -5,7 +5,7 @@ import API from "@/libs/API";
 
 const AddMoviePage = () => {
   const formcss = {
-    height: "50%",
+    height: "65%",
     border: "0px solid #000",
     width: "35%",
     padding: "2rem",
@@ -42,9 +42,21 @@ const AddMoviePage = () => {
       <div style={formcss}>
         <h1>Add Movie</h1>
         <Form form={form} onFinish={handleSubmit}>
+        <Form.Item
+            label="id"
+            name="id"
+            rules={[
+              {
+                required: true,
+                message: "Please input the title!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
           <Form.Item
-            label="Title"
-            name="title"
+            label="original_title"
+            name="original_title"
             rules={[
               {
                 required: true,
