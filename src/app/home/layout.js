@@ -3,12 +3,14 @@ import React, { useState } from "react";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Button, Col, Input, Menu, Row } from "antd";
 import { navigate } from "./actions";
+import { useRouter } from "next/navigation";
 
 const RootLayout = ({ children }) => {
   const { Search } = Input;
+  const router = useRouter();
   const onSearch = (value) => {
     console.log("Search value:", value);
-    navigate({ path: `search?name=${value}` });
+    router.push(`/search?name=${value}`);
   };
 
   const fw = {
