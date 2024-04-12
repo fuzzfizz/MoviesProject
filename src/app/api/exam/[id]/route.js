@@ -9,7 +9,7 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   const result = await User.updateOne(
-    { _id: params.id },
+    { _id: ObjectId(params.id) },
     {
       $set: {
         ...(await req.json()),
