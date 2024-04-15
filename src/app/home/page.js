@@ -51,8 +51,12 @@ const App = () => {
       >
         <Row
           justify="center"
+        >
+          <Col xs={24} sm={24} md={24} lg={20} xl={20} xxl={20}>
+        <Row
+          justify="center"
           gutter={[16, 16]}
-          style={{ flexWrap: "wrap", width: "80%" }}
+          style={{ flexWrap: "wrap", width: "100%" }}
         >
           {currentItems.map((movie, index) => (
             <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6} key={index}>
@@ -77,13 +81,16 @@ const App = () => {
               }}
               position="top"
             />
-        </Row>
-        
-        <Sider width="20%" style={siderStyle}>
+            </Row>
+            
+          </Col>
+          <Col xs={24} sm={24} md={24} lg={4} xl={4} xxl={4}>
+        <Sider width="100%" style={siderStyle}>
           <Row>
             <Col span={4}>
-              <h2>Category:</h2>
-            </Col>
+              <h2>Category: </h2>
+                </Col>
+               
             <Col span={20}></Col>
           </Row>
           <Row>
@@ -95,7 +102,9 @@ const App = () => {
               </Menu>
             </Col>
           </Row>
-        </Sider>
+            </Sider>
+            </Col>
+          </Row>
       </main>
     </div>
   );
