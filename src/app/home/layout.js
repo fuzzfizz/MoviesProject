@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Button, Col, Input, Menu, Row, Segmented } from "antd";
 import { navigate } from "./actions";
-import "./globals.css";
+import "../globals.css";
 const RootLayout = ({ children }) => {
   const [manu1, setManu1] = useState(false);
 
@@ -15,7 +15,6 @@ const RootLayout = ({ children }) => {
     console.log("Search value:", value);
     navigate({ path: `search?name=${value}` });
   };
-
   const fw = {
     fontWeight: "700",
   };
@@ -94,11 +93,7 @@ const RootLayout = ({ children }) => {
       >
         <AntdRegistry >
           <header>
-            {/* <Row
-              align="middle"
-              justify={"space-around"}
-              
-            ></Row> */}
+            
 
 
             
@@ -149,28 +144,7 @@ const RootLayout = ({ children }) => {
             
 
             
-              {/* <Col span={4}>
-                
-                <h1 className="text-3xl font-serif ">Movies Website</h1>
-              </Col>
-              <Col span={3} />
-              <Col span={8}>
-                <Search
-                  placeholder="input search text"
-                  onSearch={onSearch}
-                  enterButton
-                />
-              </Col>
-
-              <Col span={2}>
-                <Button type="primary">Bookmark</Button>
-              </Col>
-              <Col span={2} />
-              <Col span={4}>
-                <Button type="primary" href="/adminLogin">
-                  Admin Login
-                </Button>
-              </Col> */}
+              
             <Row>
               <Col span={24}>
                 <Menu
