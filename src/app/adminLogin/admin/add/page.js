@@ -91,8 +91,8 @@ const AddMoviePage = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Popularity"
-            name="popularity"
+            label="vote"
+            name="vote_average"
             rules={[
               {
                 required: true,
