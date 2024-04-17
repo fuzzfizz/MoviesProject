@@ -4,13 +4,30 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Button, Col, Input, Menu, Row } from "antd";
 import { navigate } from "./actions";
 import { useRouter } from "next/navigation";
+import API from "@/libs/API";
 
 const RootLayout = ({ children }) => {
   const { Search } = Input;
   const router = useRouter();
-  const onSearch = (value) => {
-    console.log("Search value:", value);
-    router.push(`/search?name=${value}`);
+  const [searchResults, setSearchResults] = useState([]);
+
+  const onSearch = async (e) => {
+    const searchValue = e.target.value;
+    if (!searchValue) {
+      setSearchResults([]);
+      return;
+    }
+    const result = await searchApi(searchValue);
+    setSearchResults(result.data);
+  };
+
+  const searchApi = async (searchValue) => {
+    const result = await API.get("/api/movies", {
+      params: {
+        search: searchValue,
+      },
+    });
+    return result;
   };
 
   const fw = {
@@ -80,6 +97,12 @@ const RootLayout = ({ children }) => {
     setCurrent(e.key);
     navigate({ path: e.key });
   };
+
+  const onSearchClick = (id) => {
+    setSearchResults([]);
+    console.log("id", id);
+    router.push(`/home/${id}`);
+  };
   return (
     <html lang="en">
       <body
@@ -103,9 +126,46 @@ const RootLayout = ({ children }) => {
               <Col span={8}>
                 <Search
                   placeholder="input search text"
-                  onSearch={onSearch}
+                  onChange={onSearch}
                   enterButton
+                  className="relative"
                 />
+                {searchResults && searchResults.length > 0 && (
+                  <div className="absolute flex w-full">
+                    <div
+                      style={{
+                        width: "100%",
+                        maxWidth: "90%",
+                        maxHeight: "300px",
+                        height: "max-content",
+                        overflowY: "scroll",
+                        overflowX: "hidden",
+                        display: "flex",
+                        flexDirection: "column",
+                        backgroundColor: "white",
+                        position: "absolute",
+                        color: "black",
+                        zIndex: 99,
+                        padding: "10px",
+                      }}
+                      className="border-2 border-gray-300 rounded"
+                    >
+                      {searchResults.map((result) => (
+                        <div
+                          key={result.id}
+                          style={{
+                            padding: "10px",
+                            cursor: "pointer",
+                          }}
+                          className="hover:bg-gray-200"
+                          onClick={() => onSearchClick(result.id)}
+                        >
+                          {result.title}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </Col>
 
               <Col span={2}>
