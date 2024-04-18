@@ -3,17 +3,37 @@ import React, { useState } from "react";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Button, Col, Input, Menu, Row, Segmented } from "antd";
 import { navigate } from "./actions";
+import { useRouter } from "next/navigation";
+import API from "@/libs/API";
+
 import "../globals.css";
 const RootLayout = ({ children }) => {
   const [manu1, setManu1] = useState(false);
 
   const manurespon = () => {
-    setManu1(!manu1)
-  }
+    setManu1(!manu1);
+  };
   const { Search } = Input;
-  const onSearch = (value) => {
-    console.log("Search value:", value);
-    navigate({ path: `search?name=${value}` });
+  const router = useRouter();
+  const [searchResults, setSearchResults] = useState([]);
+
+  const onSearch = async (e) => {
+    const searchValue = e.target.value;
+    if (!searchValue) {
+      setSearchResults([]);
+      return;
+    }
+    const result = await searchApi(searchValue);
+    setSearchResults(result.data);
+  };
+
+  const searchApi = async (searchValue) => {
+    const result = await API.get("/api/movies", {
+      params: {
+        search: searchValue,
+      },
+    });
+    return result;
   };
   const fw = {
     fontWeight: "700",
@@ -82,6 +102,12 @@ const RootLayout = ({ children }) => {
     setCurrent(e.key);
     navigate({ path: e.key });
   };
+
+  const onSearchClick = (id) => {
+    setSearchResults([]);
+    console.log("id", id);
+    router.push(`/home/${id}`);
+  };
   return (
     <html lang="en">
       <body
@@ -91,60 +117,147 @@ const RootLayout = ({ children }) => {
           minHeight: "100vh",
         }}
       >
-        <AntdRegistry >
+        <AntdRegistry>
           <header>
-            
-
-
-            
-              <div className="flex items-center justify-between p-25">
-              <dev className="text-white text-2xl font-x-4 m-2">Movies <br />Website</dev> 
+            <div className="flex items-center justify-between p-25">
+              <dev className="text-white text-2xl font-x-4 m-2">
+                Movies <br />
+                Website
+              </dev>
               {/* แสดงเมนูรูปแบบหน้าจอมือถือ */}
               <div className="md:hidden">
-              <button id='menu-toggle' className="text-white" onClick={manurespon}>
-                <svg
-                  fill="none"
-                  stroke='currentColor'
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                  className="w-6 h-6"
+                <button
+                  id="menu-toggle"
+                  className="text-white"
+                  onClick={manurespon}
                 >
-                  <path d="M4 6h16M4 18h16"></path>
-                </svg>
-              </button>
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    className="w-6 h-6"
+                  >
+                    <path d="M4 6h16M4 18h16"></path>
+                  </svg>
+                </button>
               </div>
               {/* แสดงเมนูรูปแบบหน้าจอคอม */}
-                  <ul className="hidden md:flex space-x-4">
-                    <li><Search
-                  placeholder="input search text"
-                  onSearch={onSearch}
-                  enterButton
-                /></li>
-                    <li className="mr-4"><Button type="primary" href="/adminLogin" className="mr-4">
-                  Admin Login
-                </Button></li>
-                  </ul>
-                
+              <ul className="hidden md:flex space-x-4">
+                <li>
+                  <Search
+                    placeholder="input search text"
+                    onChange={onSearch}
+                    enterButton
+                    className="relative"
+                  />
+                </li>
+                <li>
+                  {searchResults && searchResults.length > 0 && (
+                    <div className="absolute flex w-full">
+                      <div
+                        style={{
+                          width: "100%",
+                          maxWidth: "300px",
+                          maxHeight: "300px",
+                          height: "max-content",
+                          overflowY: "scroll",
+                          overflowX: "hidden",
+                          display: "flex",
+                          flexDirection: "column",
+                          backgroundColor: "white",
+                          position: "absolute",
+                          color: "black",
+                          zIndex: 99,
+                          padding: "10px",
+                          top: "32px",
+                          left: "-250px",
+                        }}
+                        className="border-2 border-gray-300 rounded"
+                      >
+                        {searchResults.map((result) => (
+                          <div
+                            key={result.id}
+                            style={{
+                              padding: "10px",
+                              cursor: "pointer",
+                            }}
+                            className="hover:bg-gray-200"
+                            onClick={() => onSearchClick(result.id)}
+                          >
+                            {result.title}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <Col span={4}>
+                    <Button type="primary" href="/adminLogin">
+                      Admin Login
+                    </Button>
+                  </Col>
+                </li>
+              </ul>
               {manu1 ? (
                 <ul className="flex-col md:hidden space-x-4">
-                    <li><Search
-                  placeholder="input search text"
-                  onSearch={onSearch}
-                    enterButton
-                    className="text-white"
-                /></li>
-                    <li className="mr-4 text-white"><Button type="primary" href="/adminLogin" className="mr-4">
-                  Admin Login
-                </Button></li>
-                  </ul>
+                  <li>
+                    <Search
+                      placeholder="input search text"
+                      onChange={onSearch}
+                      enterButton
+                      className="relative"
+                    />
+                  </li>
+                  <li>
+                    {searchResults && searchResults.length > 0 && (
+                      <div className="absolute flex w-full">
+                        <div
+                          style={{
+                            width: "100%",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
+                            height: "max-content",
+                            overflowY: "scroll",
+                            overflowX: "hidden",
+                            display: "flex",
+                            flexDirection: "column",
+                            backgroundColor: "white",
+                            position: "absolute",
+                            color: "black",
+                            zIndex: 99,
+                            padding: "10px",
+                            top: "0px",
+                            left: "-80px",
+                          }}
+                          className="border-2 border-gray-300 rounded"
+                        >
+                          {searchResults.map((result) => (
+                            <div
+                              key={result.id}
+                              style={{
+                                padding: "10px",
+                                cursor: "pointer",
+                              }}
+                              className="hover:bg-gray-200"
+                              onClick={() => onSearchClick(result.id)}
+                            >
+                              {result.title}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <Col span={4}>
+                      <Button type="primary" href="/adminLogin">
+                        Admin Login
+                      </Button>
+                    </Col>
+                  </li>
+                </ul>
               ) : null}
             </div>
-            
-
-            
-              
             <Row>
               <Col span={24}>
                 <Menu
