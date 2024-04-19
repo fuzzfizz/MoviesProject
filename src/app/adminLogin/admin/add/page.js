@@ -1,11 +1,13 @@
 "use client";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Select } from "antd";
 import { useState, useEffect } from "react";
 import API from "@/libs/API";
 
+const { Option } = Select;
+
 const AddMoviePage = () => {
   const formcss = {
-    height: "65%",
+    height: "70%",
     border: "0px solid #000",
     width: "35%",
     padding: "2rem",
@@ -16,12 +18,35 @@ const AddMoviePage = () => {
 
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [genres, setGenres] = useState([]);
+
+  const fetchGenres = async () => {
+    try {
+      const result = await API.get("/api/Genres");
+      setGenres(result.data);
+    } catch (error) {
+      console.error("Error fetching genres:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGenres();
+  }, []);
 
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      await API.post("/api/movies", values);
-      form.resetFields(); // เคลียร์ฟอร์มหลังจากส่งข้อมูลสำเร็จ
+      
+      // Convert genre_ids to array of numbers
+      const genreIdsArray = values.genres.map(genreId => parseInt(genreId, 10));
+      
+      // Create payload with genre_ids instead of genres
+      const payload = { ...values, genre_ids: genreIdsArray };
+      
+      // Post payload to movies API
+      await API.post("/api/movies", payload);
+      
+      form.resetFields();
       setLoading(false);
       console.log("Movie added successfully!");
     } catch (error) {
@@ -40,10 +65,10 @@ const AddMoviePage = () => {
       }}
     >
       <div style={formcss}>
-        <h1>Add Movie</h1>
+        <h1 style={{ textAlign: 'center' }}>Add Movie</h1>
         <Form form={form} onFinish={handleSubmit}>
-        <Form.Item
-            label="id"
+          <Form.Item
+            label="ID"
             name="id"
             rules={[
               {
@@ -55,7 +80,7 @@ const AddMoviePage = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            label="original_title"
+            label="Original_title"
             name="original_title"
             rules={[
               {
@@ -91,7 +116,7 @@ const AddMoviePage = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            label="vote"
+            label="Vote"
             name="vote_average"
             rules={[
               {
@@ -113,6 +138,28 @@ const AddMoviePage = () => {
             ]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            label="Genres"
+            name="genres"
+            rules={[
+              {
+                required: true,
+                message: "Please select at least one genre!",
+              },
+            ]}
+          >
+            <Select
+              mode="multiple"
+              placeholder="Select genres"
+              style={{ width: "100%" }}
+            >
+              {genres.map((genre) => (
+                <Option key={genre.id} value={genre.id}>
+                  {genre.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading}>
