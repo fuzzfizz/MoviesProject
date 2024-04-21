@@ -22,6 +22,14 @@ const AdminLogin = () => {
   const onFinish = (values) => {
     // Perform login logic here
     console.log(values);
+    // Check if username and password match
+    if (values.username === "admin" && values.password === "admin") {
+      // If match, redirect to admin page
+      window.location.href = "/adminLogin/admin";
+    } else {
+      // If not match, you can display an error message or handle it in your desired way
+      console.log("Invalid username or password");
+    }
   };
 
   return (

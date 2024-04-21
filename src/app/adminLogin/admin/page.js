@@ -1,14 +1,27 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Input, Rate, Space, Row, Col } from "antd";
-import Sider from "antd/es/layout/Sider";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Rate,
+  Space,
+  Row,
+  Col,
+  Select,
+} from "antd";
 import API from "@/libs/API";
+
+const { Option } = Select;
 
 const Admin = () => {
   const [data, setData] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
+  const [genres, setGenres] = useState([]);
 
   const getData = async () => {
     try {
@@ -19,9 +32,28 @@ const Admin = () => {
     }
   };
 
+  const getGenres = async () => {
+    try {
+      const result = await API.get("/api/Genres");
+      setGenres(result.data);
+    } catch (error) {
+      console.error("Error fetching genres:", error);
+    }
+  };
+
   const updateData = async (recordId, newData) => {
     try {
-      await API.put(`/api/movies/${recordId}`, newData);
+      // Convert genre_ids to an array of numbers
+      const genreIdsArray = newData.genres.map((genreId) =>
+        parseInt(genreId, 10)
+      );
+
+      // Create payload with genre_ids instead of genres
+      const payload = { ...newData, genre_ids: genreIdsArray };
+
+      // Update existing movie with the payload
+      await API.put(`/api/movies/${recordId}`, payload);
+
       getData();
     } catch (error) {
       console.error("Error updating data:", error);
@@ -39,14 +71,14 @@ const Admin = () => {
 
   useEffect(() => {
     getData();
+    getGenres();
   }, []);
 
   const handleEdit = async (id) => {
     try {
       const values = await form.validateFields();
-      values.vote_average *= 2; // คูณค่า vote_average ด้วย 2
+      values.vote_average *= 2; // Multiply vote_average by 2
 
-      // console.log(id._id,"id",values,"values");
       await updateData(id._id, values);
       setVisible(false);
       form.resetFields();
@@ -70,6 +102,11 @@ const Admin = () => {
       title: "Overview",
       dataIndex: "overview",
       key: "overview",
+    },
+    {
+      title: "Date",
+      dataIndex: "release_date",
+      key: "release_date",
     },
     {
       title: "Vote",
@@ -111,8 +148,10 @@ const Admin = () => {
       <div>
         <Modal
           title="Edit Movie"
-          visible={visible}
-          onOk={e => { handleEdit(selectedRecord) }}
+          open={visible}
+          onOk={(e) => {
+            handleEdit(selectedRecord);
+          }}
           onCancel={() => setVisible(false)}
         >
           <Form form={form} initialValues={selectedRecord}>
@@ -133,16 +172,66 @@ const Admin = () => {
               <Input.TextArea />
             </Form.Item>
             <Form.Item
+              label="poster_path"
+              name="poster_path"
+              rules={[
+                { required: true, message: "Please input the poster_path!" },
+              ]}
+            >
+              <Input.TextArea />
+            </Form.Item>
+            <Form.Item
               label="Vote"
               name="vote_average"
               rules={[{ required: true, message: "Please input the vote!" }]}
             >
-              <Rate defaultValue={selectedRecord ? selectedRecord.vote_average / 2 : 0} />
+              <Rate
+                defaultValue={
+                  selectedRecord ? selectedRecord.vote_average / 2 : 0
+                }
+              />
+            </Form.Item>
+            <Form.Item
+              label="Genres"
+              name="genres"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select at least one genre!",
+                },
+              ]}
+            >
+              <Select
+                mode="multiple"
+                placeholder="Select genres"
+                style={{ width: "100%" }}
+                defaultValue={selectedRecord ? selectedRecord.genre_ids : []}
+              >
+                {genres.map((genre) => (
+                  <Option key={genre.id} value={genre.id}>
+                    {genre.name}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Form>
         </Modal>
       </div>
-      <Table columns={columns} dataSource={data} />
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={{
+          style: {
+            backgroundColor: "DodgerBlue",
+            padding: "10px",
+            fontFamily: "Sans-Serif",
+            textAlign: "center",
+            margin: "auto",
+            marginBottom: "10px",
+            borderRadius: "0 0 10px 10px", // กำหนดให้ขอบล่างโค้งเสมอ
+          },
+        }}
+      />
       <Button
         type="primary"
         style={{ width: "80px" }}
