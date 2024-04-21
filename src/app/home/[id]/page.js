@@ -104,7 +104,7 @@ const MoviePage = ({ params }) => {
         <Col span={15}>
           <iframe
             width="100%"
-            height="autoplay"
+            height="300px"
             src={`https://www.youtube.com/embed/${data1[0]?.key}?autoplay=1`}
             title="YouTube video player"
             frameborder="0"

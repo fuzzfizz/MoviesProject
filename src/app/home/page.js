@@ -2,17 +2,27 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Menu, Pagination } from "antd";
 import Sider from "antd/es/layout/Sider";
-
+import SliderShow from "@/components/SliderShow";
 import CardImage from "@/components/CardImage";
 import API from "@/libs/API";
 
 const App = () => {
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
-  
+  // const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12; // จำนวนรายการต่อหน้า
+
   const [filteredData, setFilteredData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
+  // เรียกให้แสดงข้อมูล
+  const indexOfLastItem = filteredData * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
+  // const handlePageChange = (page) => {
+  //   setCurrentPage(page);
+  // };
   const getData = async () => {
     const result = await API.get("/api/movies");
     setData(result.data);
@@ -37,9 +47,7 @@ const App = () => {
       setSelectedCategory(null);
     } else {
       // กรองหนังตามหมวดหมู่ที่เลือก
-      const filteredMovies = data.filter((movie) =>
-        movie.genre_ids.includes(categoryId)
-      );
+      const filteredMovies = data.slice(indexOfFirstItem, indexOfLastItem);
       setFilteredData(filteredMovies);
       setSelectedCategory(categoryId);
     }
@@ -52,30 +60,53 @@ const App = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "white", padding: "2rem" }}>
+
+    <div style={{ backgroundColor: "white", }}>
       <main
         style={{
-          display: "flex",
+          // display: "flex",
           justifyContent: "space-between",
         }}
-      >
+        >
+        <SliderShow style={{justify: "center"}} />
+          <Row
+          justify="center"
+        >
+          <Col xs={24} sm={24} md={24} lg={20} xl={20} xxl={20}>
+            
         <Row
           justify="start"
           gutter={[16, 16]}
-          style={{ flexWrap: "wrap", width: "75%" }}
-        >
+          style={{ flexWrap: "wrap", width: "100%",padding:"20px" }}
+          >
           {filteredData.map((movie, index) => (
-            <Col span={6} key={index}>
+            <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6} key={index}>
               <CardImage
                 title={movie.title}
                 Image={movie.poster_path}
                 linkUrl={movie.id}
                 rate={movie.vote_average / 2}
-              />
+                />
             </Col>
           ))}
+              <Pagination
+              current={filteredData}
+              total={data.length}
+              pageSize={itemsPerPage}
+              onChange={handleCategorySelect}
+              showQuickJumper
+              style={{
+                width: "100%",
+                textAlign: "center",
+                padding: "20px",
+              }}
+              position="top"
+            />
         </Row>
-        <Sider width="25%" style={siderStyle}>
+          </Col>
+          <Col xs={24} sm={24} md={24} lg={4} xl={4} xxl={4}>
+
+        <Sider width="100%" style={siderStyle}>
           <Row>
             <Col span={4}>
               <h2>Category:</h2>
@@ -87,8 +118,8 @@ const App = () => {
               <Menu style={{ boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)" }}>
                 {data1.map((item) => (
                   <Menu.Item
-                    key={item.id}
-                    onClick={() => handleCategorySelect(item.id)}
+                  key={item.id}
+                  onClick={() => handleCategorySelect(item.id)}
                   >
                     {item.name}
                   </Menu.Item>
@@ -97,10 +128,9 @@ const App = () => {
             </Col>
           </Row>
         </Sider>
+                </Col>
+                </Row>
       </main>
-      <div className="">
-        <Pagination defaultCurrent={1} total={10}/>
-      </div>
     </div>
   );
 };
