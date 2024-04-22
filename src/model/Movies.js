@@ -1,5 +1,5 @@
 import connectMongoDB from "@/libs/mongodb";
-import mongoose,{ Schema } from "mongoose";
+import { Schema } from "mongoose";
 
 const MoviesSchema = new Schema(
   {
