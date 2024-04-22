@@ -15,14 +15,6 @@ const App = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // เรียกให้แสดงข้อมูล
-  const indexOfLastItem = filteredData * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-  // const handlePageChange = (page) => {
-  //   setCurrentPage(page);
-  // };
   const getData = async () => {
     const result = await API.get("/api/movies");
     setData(result.data);
@@ -33,12 +25,6 @@ const App = () => {
     const result = await API.get("/api/Genres");
     setData1(result.data);
   };
-
-  useEffect(() => {
-    getTag();
-    getData();
-  }, []);
-
   // ฟังก์ชันที่ใช้ในการกรองหนังตามหมวดหมู่ที่เลือก
   const handleCategorySelect = (categoryId) => {
     if (categoryId === selectedCategory) {
@@ -47,11 +33,20 @@ const App = () => {
       setSelectedCategory(null);
     } else {
       // กรองหนังตามหมวดหมู่ที่เลือก
-      const filteredMovies = data.slice(indexOfFirstItem, indexOfLastItem);
+      const filteredMovies = data.filter((movie) =>
+        movie.genre_ids.includes(categoryId)
+      );
+        // data.slice(indexOfFirstItem, indexOfLastItem);
       setFilteredData(filteredMovies);
       setSelectedCategory(categoryId);
     }
   };
+
+  useEffect(() => {
+    getTag();
+    getData();
+  }, []);
+
 
   const siderStyle = {
     textAlign: "center",
