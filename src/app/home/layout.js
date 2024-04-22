@@ -19,7 +19,7 @@ const RootLayout = ({ children }) => {
     {
       type: "item",
       label: "Home",
-      key: "./",
+      key: "/home",
     },
     {
       label: "Movies",
