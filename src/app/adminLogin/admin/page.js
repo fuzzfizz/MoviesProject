@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -22,6 +23,9 @@ const Admin = () => {
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
   const [genres, setGenres] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [confirmVisible2, setConfirmVisible2] = useState(false);
 
   const getData = async () => {
     try {
@@ -43,15 +47,12 @@ const Admin = () => {
 
   const updateData = async (recordId, newData) => {
     try {
-      // Convert genre_ids to an array of numbers
       const genreIdsArray = newData.genres.map((genreId) =>
         parseInt(genreId, 10)
       );
 
-      // Create payload with genre_ids instead of genres
       const payload = { ...newData, genre_ids: genreIdsArray };
 
-      // Update existing movie with the payload
       await API.put(`/api/movies/${recordId}`, payload);
 
       getData();
@@ -77,7 +78,7 @@ const Admin = () => {
   const handleEdit = async (id) => {
     try {
       const values = await form.validateFields();
-      values.vote_average *= 2; // Multiply vote_average by 2
+      values.vote_average *= 2;
 
       await updateData(id._id, values);
       setVisible(false);
@@ -86,6 +87,97 @@ const Admin = () => {
       console.error("Validation failed:", error);
     }
   };
+
+  const handleDelete = async () => {
+    try {
+      if (selectedRows.length > 0) { 
+        const selectedIds = selectedRows.map((row) => row._id);
+        await Promise.all(selectedIds.map(async (id) => await deleteData(id)));
+        setSelectedRows([]); 
+        getData();
+      }
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
+  
+  
+  const handleConfirmDelete = () => {
+    console.log("handleConfirmDelete");
+    setConfirmVisible2(true);
+  };
+
+  const handleConfirmCancel = () => {
+    setConfirmVisible2(false);
+  };
+
+  const handleConfirmOk = async () => {
+    console.log("handleDelete");
+    try {
+      await handleDelete();
+      setConfirmVisible2(false);
+    } catch (error) {
+      console.error();
+    }
+  };
+
+  const handleRowSelectionChange = (selectedRowKeys, selectedRows) => {
+    setSelectedRows(selectedRows); // เปลี่ยนการตั้งค่า selectedRows ให้เท่ากับ selectedRows ที่ได้รับจากพารามิเตอร์
+  };
+  
+  const duplicateMovie = async (recordId) => {
+    try {
+      const movieToDuplicate = await API.get(`/api/movies/${recordId}`);
+      const duplicatedMovieData = {
+        adult: movieToDuplicate.data.adult,
+        backdrop_path: movieToDuplicate.data.backdrop_path,
+        genres: movieToDuplicate.data.genres,
+        id: movieToDuplicate.data.id,
+        original_language: movieToDuplicate.data.original_language,
+        original_title: movieToDuplicate.data.original_title,
+        overview: movieToDuplicate.data.overview,
+        popularity: movieToDuplicate.data.popularity,
+        poster_path: movieToDuplicate.data.poster_path,
+        release_date: movieToDuplicate.data.release_date,
+        title: movieToDuplicate.data.title,
+        video: movieToDuplicate.data.video,
+        vote_average: movieToDuplicate.data.vote_average,
+        vote_count: movieToDuplicate.data.vote_count,
+      };
+
+      await API.post("/api/movies", duplicatedMovieData);
+      getData();
+    } catch (error) {
+      console.error();
+    }
+  };
+
+  const handleDuplicate = async (recordId) => {
+    try {
+      await duplicateMovie(recordId);
+      setSelectedRows({}); // Clear selected rows after duplication
+    } catch (error) {
+      console.error();
+    }
+  };
+
+  const handleConfirmDuplicate = (recordId) => {
+    setConfirmVisible(true);
+    setSelectedRecord(recordId);
+  };
+  
+
+  const handleConfirmDuplicateOk = async () => {
+    console.log("handleConfirmDuplicateOk");
+    try {
+      await handleDuplicate(selectedRecord);
+      setConfirmVisible(false);
+    } catch (error) {
+      console.error();
+    }
+  };
+
+  const deleteButtonDisabled = Object.keys(selectedRows).length === 0;
 
   const columns = [
     {
@@ -128,12 +220,16 @@ const Admin = () => {
             onClick={() => {
               setSelectedRecord(record);
               setVisible(true);
+              setSelectedRows([record]);
             }}
           >
             Edit
           </Button>
-          <Button type="primary" onClick={() => deleteData(record._id)}>
-            Delete
+          <Button
+            type="primary"
+            onClick={() => handleConfirmDuplicate(record.id)}
+          >
+            Duplicate
           </Button>
         </Space>
       ),
@@ -145,6 +241,35 @@ const Admin = () => {
       <Row>
         <h1 style={{ color: "white", margin: "2rem" }}>Admin Panel</h1>
       </Row>
+      <div
+        style={{ display: "flex", justifyContent: "flex-end", margin: "1rem" }}
+      >
+        <Button
+          type="primary"
+          style={{ width: "80px" }}
+          href="/adminLogin/admin/add"
+        >
+          Add
+        </Button>
+        <Button
+          type="primary"
+          onClick={handleConfirmDelete}
+          disabled={deleteButtonDisabled}
+          style={{ marginLeft: "1rem" }}
+        >
+          Delete
+        </Button>
+      </div>
+      <div>
+        <Modal
+          title="Confirm Delete"
+          open={confirmVisible2} 
+          onOk={handleConfirmOk}
+          onCancel={handleConfirmCancel}
+        >
+          <p>Are you sure you want to delete selected movies?</p>
+        </Modal>
+      </div>
       <div>
         <Modal
           title="Edit Movie"
@@ -217,9 +342,24 @@ const Admin = () => {
           </Form>
         </Modal>
       </div>
+      <div>
+        <Modal
+          title="Confirm Duplicate"
+          open={confirmVisible}
+          onOk={handleConfirmDuplicateOk}
+          onCancel={handleConfirmCancel}
+        >
+          <p>Are you sure you want to duplicate selected movies?</p>
+        </Modal>
+      </div>
       <Table
+        rowSelection={{
+          type: "checkbox",
+          onChange: handleRowSelectionChange,
+        }}
         columns={columns}
         dataSource={data}
+        rowKey="_id"
         pagination={{
           style: {
             backgroundColor: "DodgerBlue",
@@ -228,17 +368,10 @@ const Admin = () => {
             textAlign: "center",
             margin: "auto",
             marginBottom: "10px",
-            borderRadius: "0 0 10px 10px", // กำหนดให้ขอบล่างโค้งเสมอ
+            borderRadius: "0 0 10px 10px",
           },
         }}
       />
-      <Button
-        type="primary"
-        style={{ width: "80px" }}
-        href="/adminLogin/admin/add"
-      >
-        Add
-      </Button>
     </div>
   );
 };
