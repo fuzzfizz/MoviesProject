@@ -25,7 +25,8 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  let result = await Movies.deleteOne({ _id: params.id });
+  let id = new mongoose.Types.ObjectId(params.id);
+  let result = await Movies.deleteOne({ _id: id });
 
   return NextResponse.json(result);
 }
