@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Menu, Pagination } from "antd";
 import Sider from "antd/es/layout/Sider";
-
+import SliderShow from "@/components/SliderShow";
 import CardImage from "@/components/CardImage";
 import API from "@/libs/API";
 
 const App = () => {
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
-  
+
   const [filteredData, setFilteredData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -52,13 +52,16 @@ const App = () => {
   };
 
   return (
+
     <div style={{ backgroundColor: "white", padding: "2rem" }}>
+      <SliderShow/>
       <main
         style={{
           display: "flex",
           justifyContent: "space-between",
         }}
       >
+
         <Row
           justify="start"
           gutter={[16, 16]}
@@ -75,6 +78,7 @@ const App = () => {
             </Col>
           ))}
         </Row>
+
         <Sider width="25%" style={siderStyle}>
           <Row>
             <Col span={4}>
@@ -99,7 +103,7 @@ const App = () => {
         </Sider>
       </main>
       <div className="">
-        <Pagination defaultCurrent={1} total={10}/>
+        <Pagination defaultCurrent={1} total={10} />
       </div>
     </div>
   );
