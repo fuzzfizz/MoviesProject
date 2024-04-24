@@ -32,7 +32,7 @@ const MoviePage = ({ params }) => {
   };
   const getKeyword = async () => {
     const result = await axios.get(
-      `https://api.themoviedb.org/3/movie/${params.id}/keywords`,
+      `https://api.themoviedb.org/3/movie/${params.id}`,
       {
         headers: {
           accept: "application/json",
@@ -56,7 +56,7 @@ const MoviePage = ({ params }) => {
       }
     );
     setData3(result.data.results);
-    console.log(result.data.results);
+    console.log("data3",result.data.results);
   };
   useEffect(() => {
     getData(params.id);
@@ -104,7 +104,7 @@ const MoviePage = ({ params }) => {
         <Col span={15}>
           <iframe
             width="100%"
-            height={400}
+            height="300px"
             src={`https://www.youtube.com/embed/${data1[0]?.key}?autoplay=1`}
             title="YouTube video player"
             frameborder="0"
@@ -171,7 +171,7 @@ const MoviePage = ({ params }) => {
           <Title level={2}>Related:</Title>
           <Row justify="center" gutter={[16, 16]} style={{ width: "100%" }}>
             {data3.slice(1, 5).map((movie, index) => (
-              <Col span={6} key={index}>
+              <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6} key={index}>
                 <CardImage
                   title={movie.title}
                   Image={movie.poster_path}

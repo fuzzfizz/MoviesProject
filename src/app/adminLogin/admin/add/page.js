@@ -1,38 +1,58 @@
 "use client";
-import { Form, Input, InputNumber } from "antd";
-import React, { useState } from "react";
+import { Form, Input, Button, Select } from "antd";
+import { useState, useEffect } from "react";
+import API from "@/libs/API";
+
+const { Option } = Select;
 
 const AddMoviePage = () => {
-  const [title, setTitle] = useState("");
-  const [genre, setGenre] = useState("");
-  const [releaseYear, setReleaseYear] = useState("");
-
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleGenreChange = (e) => {
-    setGenre(e.target.value);
-  };
-
-  const handleReleaseYearChange = (e) => {
-    setReleaseYear(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your logic here to handle the form submission
-    console.log("Form submitted!");
-  };
-
   const formcss = {
-    height: "50%",
+    height: "70%",
     border: "0px solid #000",
     width: "35%",
     padding: "2rem",
     borderRadius: "10px",
     boxShadow: "0px 1px 15px 0 #ffffff",
     backgroundColor: "whitesmoke",
+  };
+
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [genres, setGenres] = useState([]);
+
+  const fetchGenres = async () => {
+    try {
+      const result = await API.get("/api/Genres");
+      setGenres(result.data);
+    } catch (error) {
+      console.error("Error fetching genres:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGenres();
+  }, []);
+
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      
+      // Convert genre_ids to array of numbers
+      const genreIdsArray = values.genres.map(genreId => parseInt(genreId, 10));
+      
+      // Create payload with genre_ids instead of genres
+      const payload = { ...values, genre_ids: genreIdsArray };
+      
+      // Post payload to movies API
+      await API.post("/api/movies", payload);
+      
+      form.resetFields();
+      setLoading(false);
+      console.log("Movie added successfully!");
+    } catch (error) {
+      console.error("Error adding movie:", error);
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,44 +65,107 @@ const AddMoviePage = () => {
       }}
     >
       <div style={formcss}>
-        <h1>Add Movie</h1>
-        <Form style={{}} onSubmit={handleSubmit}>
+        <h1 style={{ textAlign: 'center' }}>Add Movie</h1>
+        <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             label="ID"
             name="id"
             rules={[
               {
                 required: true,
+                message: "Please input the title!",
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <br />
           <Form.Item
-            label="Title"
-            name="id"
+            label="Original_title"
+            name="original_title"
             rules={[
               {
                 required: true,
+                message: "Please input the title!",
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <br />
           <Form.Item
-            label="ID"
-            name="id"
+            label="Overview"
+            name="overview"
             rules={[
               {
                 required: true,
+                message: "Please input the overview!",
+              },
+            ]}
+          >
+            <Input.TextArea />
+          </Form.Item>
+          <Form.Item
+            label="Release Date"
+            name="release_date"
+            rules={[
+              {
+                required: true,
+                message: "Please input the release date!",
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <br />
+          <Form.Item
+            label="Vote"
+            name="vote_average"
+            rules={[
+              {
+                required: true,
+                message: "Please input the popularity!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Poster Path"
+            name="poster_path"
+            rules={[
+              {
+                required: true,
+                message: "Please input the poster path!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Genres"
+            name="genres"
+            rules={[
+              {
+                required: true,
+                message: "Please select at least one genre!",
+              },
+            ]}
+          >
+            <Select
+              mode="multiple"
+              placeholder="Select genres"
+              style={{ width: "100%" }}
+            >
+              {genres.map((genre) => (
+                <Option key={genre.id} value={genre.id}>
+                  {genre.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Add Movie
+            </Button>
+          </Form.Item>
         </Form>
       </div>
     </div>
