@@ -10,7 +10,7 @@ import {
   Rate,
   Space,
   Row,
-  Col,
+  message,
   Select,
 } from "antd";
 import API from "@/libs/API";
@@ -79,31 +79,32 @@ const Admin = () => {
     try {
       const values = await form.validateFields();
       values.vote_average *= 2;
-
       await updateData(id._id, values);
       setVisible(false);
       form.resetFields();
+      message.success('Edit movie successfully!');
     } catch (error) {
       console.error("Validation failed:", error);
+      message.error('Failed to Edit movie.');
     }
   };
 
   const handleDelete = async () => {
     try {
-      if (selectedRows.length > 0) { 
+      if (selectedRows.length > 0) {
         const selectedIds = selectedRows.map((row) => row._id);
         await Promise.all(selectedIds.map(async (id) => await deleteData(id)));
-        setSelectedRows([]); 
+        setSelectedRows([]);
+        message.success('Delete movie successfully!');
         getData();
       }
     } catch (error) {
       console.error("Error deleting data:", error);
+      message.error('Failed to Delete movie.');
     }
   };
-  
-  
+
   const handleConfirmDelete = () => {
-    console.log("handleConfirmDelete");
     setConfirmVisible2(true);
   };
 
@@ -112,7 +113,6 @@ const Admin = () => {
   };
 
   const handleConfirmOk = async () => {
-    console.log("handleDelete");
     try {
       await handleDelete();
       setConfirmVisible2(false);
@@ -122,9 +122,9 @@ const Admin = () => {
   };
 
   const handleRowSelectionChange = (selectedRowKeys, selectedRows) => {
-    setSelectedRows(selectedRows); // เปลี่ยนการตั้งค่า selectedRows ให้เท่ากับ selectedRows ที่ได้รับจากพารามิเตอร์
+    setSelectedRows(selectedRows);
   };
-  
+
   const duplicateMovie = async (recordId) => {
     try {
       const movieToDuplicate = await API.get(`/api/movies/${recordId}`);
@@ -156,8 +156,10 @@ const Admin = () => {
     try {
       await duplicateMovie(recordId);
       setSelectedRows({}); // Clear selected rows after duplication
+      message.success('Duplicate movie successfully!');
     } catch (error) {
       console.error();
+      message.error('Failed to Duplicate movie.');
     }
   };
 
@@ -165,7 +167,6 @@ const Admin = () => {
     setConfirmVisible(true);
     setSelectedRecord(recordId);
   };
-  
 
   const handleConfirmDuplicateOk = async () => {
     console.log("handleConfirmDuplicateOk");
@@ -263,7 +264,7 @@ const Admin = () => {
       <div>
         <Modal
           title="Confirm Delete"
-          open={confirmVisible2} 
+          open={confirmVisible2}
           onOk={handleConfirmOk}
           onCancel={handleConfirmCancel}
         >
@@ -273,7 +274,7 @@ const Admin = () => {
       <div>
         <Modal
           title="Edit Movie"
-          open={visible}
+          visible={visible}
           onOk={(e) => {
             handleEdit(selectedRecord);
           }}
@@ -283,32 +284,24 @@ const Admin = () => {
             <Form.Item
               label="Title"
               name="original_title"
-              rules={[{ required: true, message: "Please input the title!" }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label="Overview"
               name="overview"
-              rules={[
-                { required: true, message: "Please input the overview!" },
-              ]}
             >
               <Input.TextArea />
             </Form.Item>
             <Form.Item
-              label="poster_path"
+              label="poster"
               name="poster_path"
-              rules={[
-                { required: true, message: "Please input the poster_path!" },
-              ]}
             >
               <Input.TextArea />
             </Form.Item>
             <Form.Item
               label="Vote"
               name="vote_average"
-              rules={[{ required: true, message: "Please input the vote!" }]}
             >
               <Rate
                 defaultValue={
@@ -319,12 +312,6 @@ const Admin = () => {
             <Form.Item
               label="Genres"
               name="genres"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select at least one genre!",
-                },
-              ]}
             >
               <Select
                 mode="multiple"
