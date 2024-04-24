@@ -2,12 +2,14 @@
 
 import API from "@/libs/API";
 import { Button, Form, Image, Upload } from "antd";
-import react,{ useState,useEffect } from "react";
+import react, { useState, useEffect } from "react";
 
 
 const TestUploadFile = () => {
 
     const [image, setImage] = useState(null);
+    const [filenameArray, setFilenameArray] = useState(null);
+
 
     const handleUpload = (value) => {
         console.log(value);
@@ -19,12 +21,18 @@ const TestUploadFile = () => {
         });
     };
 
+    const handleDelete = (filename) => {
+        API.delete(`api/file-management/del-img?name=${filename}`);
+        console.log(filename);
+    };
+
     useEffect(() => {
         API.get("api/file-management/get-all")
             .then((res) => {
                 console.log(res.data);
                 const filenames = res.data.map(item => item.filename);
                 const promises = filenames.map(filename => API.get(`api/file-management/get-by-filename?filename=${filename}`));
+                setFilenameArray(filenames)
                 return Promise.all(promises);
             })
             .then((responses) => {
@@ -44,14 +52,15 @@ const TestUploadFile = () => {
             test
 
             {image && image.map((img, index) => (
-                <Image
-                    key={index}
-                    src={`data:image/${img.type};base64,${img}`}
-                    alt={`Uploaded Image ${index}`}
-                    style={{ width: "300px", height: "300px" }}
-                />
+                <div key={index}>
+                    <img src={`data:image/${img.type};base64,${img}`}
+                        alt={`Uploaded Image ${index}`}
+                        style={{ width: "300px", height: "300px" }} />
+                    <Button onClick={() => handleDelete(filenameArray[index])}>Delete</Button>
+                </div>
             ))}
-           
+
+
 
 
             <Form onFinish={handleUpload}>
