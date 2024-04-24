@@ -294,7 +294,7 @@ const Admin = () => {
               <Input.TextArea />
             </Form.Item>
             <Form.Item
-              label="poster_path"
+              label="poster"
               name="poster_path"
             >
               <Input.TextArea />
