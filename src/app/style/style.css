@@ -1,0 +1,14 @@
+.videoSize {
+  height: 600px;
+}
+.trilSize {
+  height: 400px;
+}
+@media only screen and (max-width: 768px) {
+  .videoSize {
+    height: 250px;
+  }
+  .trilSize {
+    height: 250px;
+  }
+}
