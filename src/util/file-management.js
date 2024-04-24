@@ -65,4 +65,10 @@ async function getAllFiles() {
   return Promise.all(fileDataPromises);
 }
 
-export { uploadFile, getFile, getAllFiles };
+const deleteFile = async (filename) => {
+  const files = await bucket.find({ filename }).toArray();
+  const fileId = await files[0]?._id;
+  return bucket.delete(fileId);
+};
+
+export { uploadFile, getFile, getAllFiles,deleteFile };
