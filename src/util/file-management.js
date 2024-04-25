@@ -42,24 +42,25 @@ const getFile = (filename) => {
 
 async function getAllFiles() {
   const files = await bucket.find({}).toArray();
-
+ console.log(files);
   const fileDataPromises = files.map(async (file) => {
-    const downloadStream = bucket.openDownloadStream(file._id);
-    const chunks = [];
+    return file
+    // const downloadStream = bucket.openDownloadStream(file._id);
+    // const chunks = [];
 
-    return new Promise((resolve, reject) => {
-        downloadStream.on("data", (chunk) => {
-          chunks.push(chunk);
-        });
+    // return new Promise((resolve, reject) => {
+    //     downloadStream.on("data", (chunk) => {
+    //       chunks.push(chunk);
+    //     });
 
-        downloadStream.on("error", reject);
+    //     downloadStream.on("error", reject);
 
-        downloadStream.on("end", () => {
-          const fileData = Buffer.concat(chunks);
-          resolve({ filename: file.filename, data: fileData });
-        });
-      }
-    );
+    //     downloadStream.on("end", () => {
+    //       const fileData = Buffer.concat(chunks);
+    //       resolve({ filename: file.filename, data: fileData });
+    //     });
+    //   }
+    // );
   });
 
   return Promise.all(fileDataPromises);
