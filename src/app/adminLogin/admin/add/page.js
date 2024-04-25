@@ -6,7 +6,6 @@ import API from "@/libs/API";
 const { Option } = Select;
 
 const AddMoviePage = () => {
-  
   const formcss = {
     border: "0px solid #000",
     width: "35%",
@@ -36,17 +35,19 @@ const AddMoviePage = () => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const genreIdsArray = values.genres.map(genreId => parseInt(genreId, 10));
+      const genreIdsArray = values.genres.map((genreId) =>
+        parseInt(genreId, 10)
+      );
       const payload = { ...values, genre_ids: genreIdsArray };
 
-      await API.post("/api/movies", payload);  
+      await API.post("/api/movies", payload);
       form.resetFields();
       setLoading(false);
-      message.success('Added movie successfully!');
+      message.success("Added movie successfully!");
     } catch (error) {
       console.error("Error adding movie:", error);
       setLoading(false);
-      message.error('Failed to add movie.');
+      message.error("Failed to add movie.");
     }
   };
 
@@ -60,7 +61,7 @@ const AddMoviePage = () => {
       }}
     >
       <div style={formcss}>
-        <h1 style={{ textAlign: 'center' }}>Add Movie</h1>
+        <h1 style={{ textAlign: "center" }}>Add Movie</h1>
         <Form form={form} onFinish={handleSubmit}>
           <Form.Item
             label="ID"
@@ -68,7 +69,11 @@ const AddMoviePage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input number the ID!",
+                message: "Please input the ID!",
+              },
+              {
+                pattern: /^[0-9]+$/,
+                message: "Please input Number a valid ID!",
               },
             ]}
           >
@@ -106,9 +111,13 @@ const AddMoviePage = () => {
                 required: true,
                 message: "Please input the release date!",
               },
+              {
+                pattern: /^\d{4}-\d{2}-\d{2}$/,
+                message: "Please input a valid date (YYYY-MM-DD)!",
+              },
             ]}
           >
-            <Input />
+            <Input type="date" />
           </Form.Item>
           <Form.Item
             label="Vote"
@@ -116,7 +125,11 @@ const AddMoviePage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input the popularity!",
+                message: "Please input the vote!",
+              },
+              {
+                pattern: /^(10|\d)$/,
+                message: "Please input a valid vote (between 0 and 10)!",
               },
             ]}
           >
