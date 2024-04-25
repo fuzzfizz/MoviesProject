@@ -247,7 +247,14 @@ const Admin = () => {
       >
         <Button
           type="primary"
-          style={{ width: "80px" }}
+          style={{  }}
+          href="/upslidershow"
+        >
+          Add SlideShow
+        </Button>
+        <Button
+          type="primary"
+          style={{ marginLeft: "1rem" }}
           href="/adminLogin/admin/add"
         >
           Add
