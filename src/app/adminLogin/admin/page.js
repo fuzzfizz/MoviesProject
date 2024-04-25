@@ -248,7 +248,7 @@ const Admin = () => {
         <Button
           type="primary"
           style={{  }}
-          href="@/upslidershow"
+          href="/upslidershow"
         >
           Add SlideShow
         </Button>
