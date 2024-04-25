@@ -35,6 +35,11 @@ const RootLayout = ({ children }) => {
     });
     return result;
   };
+
+  const pushSearch = (e) => {
+    console.log("e", e);
+    navigate({ path: "/home/search" });
+   }
   const fw = {
     fontWeight: "700",
   };
@@ -208,6 +213,7 @@ const RootLayout = ({ children }) => {
                       onChange={onSearch}
                       enterButton
                       className="relative"
+                      onClick={pushSearch}
                     />
                   </li>
                   <li>

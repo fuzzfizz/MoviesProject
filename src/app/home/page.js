@@ -31,7 +31,7 @@ const App = () => {
   const getData = async () => {
     const result = await API.get("/api/movies");
     setData(result.data);
-    setFilteredData(result.data); 
+    setFilteredData(result.data);
   };
 
   const getTag = async () => {
@@ -63,7 +63,11 @@ const App = () => {
         <SliderShow style={{ justify: "center" }} />
         <Row justify="center">
           <Col xs={24} sm={24} md={24} lg={20} xl={20} xxl={20}>
-            <Row justify="start" gutter={[16, 16]} style={{ flexWrap: "wrap", width: "100%", padding: "20px" }}>
+            <Row
+              justify="start"
+              gutter={[16, 16]}
+              style={{ flexWrap: "wrap", width: "100%", padding: "20px" }}
+            >
               {currentMovies.map((movie, index) => (
                 <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6} key={index}>
                   <CardImage
@@ -74,17 +78,17 @@ const App = () => {
                   />
                 </Col>
               ))}
-              
+
               <Row justify="center" className="w-full">
-  <Col>
-    <Pagination
-      current={currentPage}
-      total={filteredData.length}
-      pageSize={pageSize}
-      onChange={paginate}
-    />
-  </Col>
-</Row>
+                <Col>
+                  <Pagination
+                    current={currentPage}
+                    total={filteredData.length}
+                    pageSize={pageSize}
+                    onChange={paginate}
+                  />
+                </Col>
+              </Row>
             </Row>
           </Col>
           <Col xs={24} sm={24} md={24} lg={4} xl={4} xxl={4}>
