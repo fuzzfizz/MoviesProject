@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Carousel } from "antd";
 import API from "@/libs/API";
-import { Button, Form, Image, Upload } from "antd";
+import { Image } from "antd";
 
 const contentStyle = {
-  height: "160px",
+ 
   color: "#fff",
   lineHeight: "160px",
   textAlign: "center",
   background: "#364d79",
+  width: "1000px", 
+  height: "800px", 
+  overflow: "hidden", 
 };
 
 function SliderShow() {
   const [image, setImage] = useState(null);
+
 
   useEffect(() => {
     API.get("api/file-management/get-all")
@@ -35,30 +39,34 @@ function SliderShow() {
   }, []);
 
   return (
-    <div className="px-4 py-4 bg-slate-500">
+    <div className=" bg-slate-500">
       <Carousel
-        autoplay
-        style={{
-          width: "100%",
-          height: "50%",
-          objectFit: "cover",
-          textAlign: "center",
-        }}
+        // autoplay
+        // style={{
+        //   width:"100%",
+        //   height: "50%",
+        //   objectFit: "cover",
+        //   textAlign: "center",
+        // }}
       >
         {image &&
           image.map((img, index) => (
-            <div key={index} style={contentStyle}>
+            <div key={index} style={contentStyle} max-w-screen-xl>
               <Image
                 src={`data:image/${img.type};base64,${img}`}
                 alt={`Uploaded Image ${index}`}
                 style={{
-                  width: "100%",
-                  height: "300px",
-                  overflow: "hidden",
+                  width:"100%",
+                  height: "100%",
+                  overflow: "cover",
                 }}
               />
             </div>
           ))}
+
+
+
+
       </Carousel>
     </div>
   );
