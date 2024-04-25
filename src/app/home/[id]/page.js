@@ -1,10 +1,12 @@
 "use client";
-import { Col, Menu, Rate, Row, Tag } from "antd";
+import { Col, Rate, Row, Tag } from "antd";
 import Title from "antd/es/typography/Title";
 import React, { useEffect, useState } from "react";
 import API from "@/libs/API";
 import axios from "axios";
 import CardImage from "@/components/CardImage";
+import "@/app/style/style.css";
+import Card from "antd/es/card/Card";
 
 const MoviePage = ({ params }) => {
   const [data, setData] = useState([]);
@@ -56,7 +58,7 @@ const MoviePage = ({ params }) => {
       }
     );
     setData3(result.data.results);
-    console.log("data3",result.data.results);
+    console.log("data3", result.data.results);
   };
   useEffect(() => {
     getData(params.id);
@@ -70,14 +72,13 @@ const MoviePage = ({ params }) => {
       style={{
         display: "flex",
         backgroundColor: "white",
-        padding: "2rem",
         justifyContent: "center",
       }}
     >
       <Row
         justify="space-around"
         gutter={[16, 16]}
-        style={{ width: "80%", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)" }}
+        style={{ width: "99%", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)" }}
       >
         <Col
           span={24}
@@ -93,40 +94,39 @@ const MoviePage = ({ params }) => {
             {data.title}
           </Title>
         </Col>
-        <Col span={7}>
-          <Col key={data.id}>
-            <img
-              width={"100%"}
-              src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
-            />
-          </Col>
+        <Col xs={20} sm={14} md={12} lg={12} xl={6} xxl={6}>
+          <img
+            key={data.id}
+            width={"100%"}
+            src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
+          />
         </Col>
-        <Col span={15}>
+        <Col className="trilSize" xs={24} sm={24} md={24} lg={20} xl={14}>
           <iframe
             width="100%"
-            height="300px"
+            height="100%"
             src={`https://www.youtube.com/embed/${data1[0]?.key}?autoplay=1`}
-            title="YouTube video player"
             frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
+            allow="autoplay; "
           />
-
-          <Col
-            span={24}
-            style={{
-              color: "black",
-              margin: "0px",
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            <Title key={data.id} level={2}>
-              Rate:
-              <Rate disabled defaultValue={`${data.vote_average / 2}`} />
-            </Title>
-          </Col>
+        </Col>
+        <Col
+          xs={24}
+          sm={24}
+          md={24}
+          lg={20}
+          xl={24}
+          style={{
+            color: "black",
+            alignItems: "center",
+            display: "flex",
+            paddingLeft: "2.5rem",
+          }}
+        >
+          <Title key={data.id} level={2}>
+            Rate:
+            <Rate disabled defaultValue={`${data.vote_average / 2}`} />
+          </Title>
         </Col>
         <Col span={24} style={{ paddingTop: "0px", paddingLeft: "2.5rem" }}>
           <Title level={2} style={{ color: "black", margin: "0px" }}>
@@ -144,28 +144,35 @@ const MoviePage = ({ params }) => {
           style={{
             color: "black",
             padding: "2rem",
-            paddingLeft: "2rem",
+            paddingLeft: "2.4rem",
           }}
         >
-          <Title style={{ margin: "0px" }} level={4}>
-            {data.overview}
-          </Title>
+          <Card>
+            <Title style={{ margin: "0px" }} level={4}>
+              {data.overview}
+            </Title>
+          </Card>
         </Col>
 
         <Col
-          span={24}
-          style={{ color: "black", paddingLeft: "2rem", paddingRight: "2rem" }}
+          className="videoSize"
+          xs={24}
+          sm={24}
+          md={24}
+          lg={22}
+          xl={22}
+          style={{ color: "black" }}
         >
           <iframe
             width="100%"
-            height={500}
+            height="100%"
             src={`https://www.youtube.com/embed/${data1[1]?.key}`}
             title="YouTube video player"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen
-          ></iframe>
+          />
         </Col>
         <Col style={{ color: "black", padding: "2rem", width: "100%" }}>
           <Title level={2}>Related:</Title>

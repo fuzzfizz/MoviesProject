@@ -1,13 +1,13 @@
 "use client";
-import { Form, Input, Button, Select } from "antd";
+import { Form, Input, Button, Select, message } from "antd";
 import { useState, useEffect } from "react";
 import API from "@/libs/API";
 
 const { Option } = Select;
 
 const AddMoviePage = () => {
+  
   const formcss = {
-    height: "70%",
     border: "0px solid #000",
     width: "35%",
     padding: "2rem",
@@ -36,22 +36,17 @@ const AddMoviePage = () => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      
-      // Convert genre_ids to array of numbers
       const genreIdsArray = values.genres.map(genreId => parseInt(genreId, 10));
-      
-      // Create payload with genre_ids instead of genres
       const payload = { ...values, genre_ids: genreIdsArray };
-      
-      // Post payload to movies API
-      await API.post("/api/movies", payload);
-      
+
+      await API.post("/api/movies", payload);  
       form.resetFields();
       setLoading(false);
-      console.log("Movie added successfully!");
+      message.success('Added movie successfully!');
     } catch (error) {
       console.error("Error adding movie:", error);
       setLoading(false);
+      message.error('Failed to add movie.');
     }
   };
 
@@ -73,7 +68,7 @@ const AddMoviePage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input the title!",
+                message: "Please input number the ID!",
               },
             ]}
           >
