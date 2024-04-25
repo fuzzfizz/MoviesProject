@@ -37,9 +37,10 @@ const RootLayout = ({ children }) => {
   };
 
   const pushSearch = (e) => {
-    window.location.reload(); // Refresh the window
     console.log("search:", e);
-    navigate({ path: `/home/search?search=${e}` });
+    window.location.href = `/home/search?search=${e}`;
+
+    // navigate({ path: `/home/search?search=${e}` });
   };
   const fw = {
     fontWeight: "700",
@@ -215,6 +216,7 @@ const RootLayout = ({ children }) => {
                       onChange={onSearch}
                       enterButton
                       className="relative"
+                      onSearch={pushSearch}
                     />
                   </li>
                   <li>
