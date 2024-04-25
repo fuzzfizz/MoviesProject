@@ -37,9 +37,10 @@ const RootLayout = ({ children }) => {
   };
 
   const pushSearch = (e) => {
-    console.log("e", e);
-    navigate({ path: "/home/search" });
-   }
+    window.location.reload(); // Refresh the window
+    console.log("search:", e);
+    navigate({ path: `/home/search?search=${e}` });
+  };
   const fw = {
     fontWeight: "700",
   };
@@ -125,7 +126,7 @@ const RootLayout = ({ children }) => {
         <AntdRegistry>
           <header>
             <div className="flex items-center justify-between p-25">
-              <dev className="text-white text-2xl font-x-4 m-2">
+              <dev className="m-2 text-2xl text-white font-x-4">
                 Movies <br />
                 Website
               </dev>
@@ -150,13 +151,14 @@ const RootLayout = ({ children }) => {
                 </button>
               </div>
               {/* แสดงเมนูรูปแบบหน้าจอคอม */}
-              <ul className="hidden md:flex space-x-4">
+              <ul className="hidden space-x-4 md:flex">
                 <li>
                   <Search
                     placeholder="input search text"
                     onChange={onSearch}
                     enterButton
                     className="relative"
+                    onSearch={pushSearch}
                   />
                 </li>
                 <li>
@@ -206,14 +208,13 @@ const RootLayout = ({ children }) => {
                 </li>
               </ul>
               {manu1 ? (
-                <ul className="flex-col md:hidden space-x-4">
+                <ul className="flex-col space-x-4 md:hidden">
                   <li>
                     <Search
                       placeholder="input search text"
                       onChange={onSearch}
                       enterButton
                       className="relative"
-                      onClick={pushSearch}
                     />
                   </li>
                   <li>
