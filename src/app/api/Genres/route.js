@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req) {
   let result = await Genres.find({});
-
+  console.log(result)
   return NextResponse.json(result);
 }
 
