@@ -9,10 +9,16 @@ import API from "@/libs/API";
 const App = () => {
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
+  const [cetargory, setCetargory] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12; // จำนวนหนังที่แสดงในแต่ละหน้า
+  const getcetargory = async () => {
+    const result = await API.get("/api/movies");
+    setCetargory(result.data)
+    console.log(result.data)
+  }
 
   const handleCategorySelect = (categoryId) => {
     if (categoryId === selectedCategory) {
@@ -42,6 +48,7 @@ const App = () => {
   useEffect(() => {
     getTag();
     getData();
+    getcetargory();
   }, []);
 
   const siderStyle = {
@@ -55,6 +62,7 @@ const App = () => {
   const indexOfFirstMovie = indexOfLastMovie - pageSize;
   const currentMovies = filteredData.slice(indexOfFirstMovie, indexOfLastMovie);
 
+    // console.log(data1)
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -75,6 +83,14 @@ const App = () => {
                     Image={movie.poster_path}
                     linkUrl={movie.id}
                     rate={movie.vote_average / 2}
+                    Genres={movie.genre_ids}
+                    TagData={data1}
+                    
+                    // {cetargory.map((movie, index) => (
+                    //   <div key={index}>
+                    //     {movie.genre_ids}
+                    //   </div>
+                    // ))}
                   />
                 </Col>
               ))}
