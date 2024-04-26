@@ -1,5 +1,6 @@
 import { connectionDatabase } from "@/libs/mongodb";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
+import File from "@/model/files";
 
 const bucket = new mongoose.mongo.GridFSBucket(connectionDatabase.db);
 
@@ -41,8 +42,8 @@ const getFile = (filename) => {
 };
 
 async function getAllFiles() {
-  const files = await bucket.find({}).toArray();
- console.log(files);
+  const files = await bucket.find({}).sort({ "metadata.position": 1 }).toArray();
+  console.log(files);
   const fileDataPromises = files.map(async (file) => {
     return file
     // const downloadStream = bucket.openDownloadStream(file._id);
@@ -72,4 +73,10 @@ const deleteFile = async (filename) => {
   return bucket.delete(fileId);
 };
 
-export { uploadFile, getFile, getAllFiles,deleteFile };
+const updateFile = async (filename, index) => {
+  console.log(filename)
+  return await File.updateOne({ filename: filename.filename }, { $set: { "metadata.position": index } })
+};
+
+
+export { uploadFile, getFile, getAllFiles, deleteFile, updateFile };

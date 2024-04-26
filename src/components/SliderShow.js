@@ -4,14 +4,14 @@ import API from "@/libs/API";
 import { Image } from "antd";
 
 const contentStyle = {
- 
+
   color: "#fff",
   lineHeight: "160px",
   textAlign: "center",
   background: "#364d79",
-  width: "1000px", 
-  height: "800px", 
-  overflow: "hidden", 
+  width: "100%",
+  height: "auto",
+  overflow: "hidden",
 };
 
 function SliderShow() {
@@ -39,25 +39,25 @@ function SliderShow() {
   }, []);
 
   return (
-    <div className=" bg-slate-500">
+    <div className=" bg-black">
       <Carousel
-        // autoplay
-        // style={{
-        //   width:"100%",
-        //   height: "50%",
-        //   objectFit: "cover",
-        //   textAlign: "center",
-        // }}
+      autoplay
+      style={{
+        width:"100%",
+        height: "50%",
+        objectFit: "cover",
+        textAlign: "center",
+      }}
       >
         {image &&
           image.map((img, index) => (
-            <div key={index} style={contentStyle} max-w-screen-xl>
+            <div key={index} style={contentStyle}>
               <Image
-                src={`data:image/${img.type};base64,${img}`}
+                src={`data:image/${img.type};base64,${img.base64}`}
                 alt={`Uploaded Image ${index}`}
                 style={{
-                  width:"100%",
-                  height: "100%",
+                  width: "100%",
+                  height: "1200px",
                   overflow: "cover",
                 }}
               />

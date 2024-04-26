@@ -8,7 +8,6 @@ export async function GET(request) {
   const base64 = file.toString("base64");
   return Response.json(
     {base64:base64,filename:filename} 
-  
-  
+
   );
 } 
