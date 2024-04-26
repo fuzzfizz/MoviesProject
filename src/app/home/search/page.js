@@ -11,6 +11,7 @@ import { Typography } from "antd";
 const App = () => {
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
+  const [cetargory, setCetargory] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,6 +22,12 @@ const App = () => {
   const search = searchParams.get("search");
 
   const searchValue = search;
+
+  const getcetargory = async () => {
+    const result = await API.get("/api/movies");
+    setCetargory(result.data);
+    console.log(result.data);
+  };
 
   const handleCategorySelect = (categoryId) => {
     if (categoryId === selectedCategory) {
@@ -63,6 +70,7 @@ const App = () => {
 
   useEffect(() => {
     getTag();
+    getcetargory();
     searchApi();
     searchData();
   }, []);
@@ -105,6 +113,8 @@ const App = () => {
                     Image={movie.poster_path}
                     linkUrl={movie.id}
                     rate={movie.vote_average / 2}
+                    Genres={movie.genre_ids}
+                    TagData={data1}
                   />
                 </Col>
               ))}
