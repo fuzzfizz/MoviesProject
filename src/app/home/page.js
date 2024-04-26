@@ -85,6 +85,7 @@ const App = () => {
                     rate={movie.vote_average / 2}
                     Genres={movie.genre_ids}
                     TagData={data1}
+                    
                     // {cetargory.map((movie, index) => (
                     //   <div key={index}>
                     //     {movie.genre_ids}
