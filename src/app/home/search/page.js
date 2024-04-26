@@ -7,7 +7,6 @@ import SliderShow from "@/components/SliderShow";
 import CardImage from "@/components/CardImage";
 import API from "@/libs/API";
 import { Typography } from "antd";
-import { Suspense } from "react";
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -17,10 +16,11 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const pageSize = 12;
+  const searchParams = new useSearchParams();
 
-  const searchParams = <Suspense>{useSearchParams()}</Suspense>;
+  const search = searchParams.get("search");
 
-  const searchValue = searchParams;
+  const searchValue = search;
 
   const handleCategorySelect = (categoryId) => {
     if (categoryId === selectedCategory) {
