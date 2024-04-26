@@ -16,9 +16,9 @@ const App = () => {
   const pageSize = 12; // จำนวนหนังที่แสดงในแต่ละหน้า
   const getcetargory = async () => {
     const result = await API.get("/api/movies");
-    setCetargory(result.data)
-    console.log(result.data)
-  }
+    setCetargory(result.data);
+    console.log(result.data);
+  };
 
   const handleCategorySelect = (categoryId) => {
     if (categoryId === selectedCategory) {
@@ -62,7 +62,7 @@ const App = () => {
   const indexOfFirstMovie = indexOfLastMovie - pageSize;
   const currentMovies = filteredData.slice(indexOfFirstMovie, indexOfLastMovie);
 
-    // console.log(data1)
+  // console.log(data1)
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -85,7 +85,7 @@ const App = () => {
                     rate={movie.vote_average / 2}
                     Genres={movie.genre_ids}
                     TagData={data1}
-                    
+
                     // {cetargory.map((movie, index) => (
                     //   <div key={index}>
                     //     {movie.genre_ids}
