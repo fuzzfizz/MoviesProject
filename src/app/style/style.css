@@ -4,11 +4,23 @@
 .trilSize {
   height: 400px;
 }
-@media only screen and (max-width: 768px) {
+.Nav {
+  justify-content: space-around;
+  align-items: center;
+  height: 90px;
+}
+@media only screen and (max-width: 568px) {
   .videoSize {
     height: 250px;
   }
   .trilSize {
     height: 250px;
+  }
+  .Nav {
+    justify-content: space-between;
+    align-items: center;
+    height: auto;
+    min-height: 90px;
+    padding: 10px;
   }
 }
