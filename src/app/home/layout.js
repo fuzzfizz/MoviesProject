@@ -38,7 +38,7 @@ const RootLayout = ({ children }) => {
 
   const pushSearch = (e) => {
     console.log("search:", e);
-    window.location.href = `/home/search?search=${e}`;
+    window.location.href = `/home/search?${e}`;
 
     // navigate({ path: `/home/search?search=${e}` });
   };
