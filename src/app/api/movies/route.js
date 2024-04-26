@@ -18,7 +18,6 @@ export async function GET(req) {
   }
 
   let result = await Movies.find({});
-
   return NextResponse.json(result);
 }
 
