@@ -7,6 +7,7 @@ import SliderShow from "@/components/SliderShow";
 import CardImage from "@/components/CardImage";
 import API from "@/libs/API";
 import { Typography } from "antd";
+import { Suspense } from "react";
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -14,12 +15,12 @@ const App = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+
   const pageSize = 12;
 
-  const searchParams = useSearchParams();
+  const searchParams = <Suspense>{useSearchParams()}</Suspense>;
 
-  const search = searchParams.get("search");
-  const searchValue = search;
+  const searchValue = searchParams;
 
   const handleCategorySelect = (categoryId) => {
     if (categoryId === selectedCategory) {
@@ -54,7 +55,7 @@ const App = () => {
   const searchApi = async () => {
     const result = await API.get("/api/movies", {
       params: {
-        search: searchValue,
+        search: String(searchValue), // Convert searchValue to a string
       },
     });
     return result;
