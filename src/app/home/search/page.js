@@ -1,10 +1,12 @@
 "use client";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { Row, Col, Menu, Pagination } from "antd";
+import { Card, Col, Menu, Pagination, Row } from "antd";
 import Sider from "antd/es/layout/Sider";
 import SliderShow from "@/components/SliderShow";
 import CardImage from "@/components/CardImage";
 import API from "@/libs/API";
+import { Typography } from "antd";
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -12,7 +14,12 @@ const App = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 12; // จำนวนหนังที่แสดงในแต่ละหน้า
+  const pageSize = 12;
+
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("search");
+  const searchValue = search;
 
   const handleCategorySelect = (categoryId) => {
     if (categoryId === selectedCategory) {
@@ -28,21 +35,38 @@ const App = () => {
     setCurrentPage(1); // เมื่อเปลี่ยนหมวดหมู่ให้กลับไปที่หน้าแรก
   };
 
-  const getData = async () => {
-    const result = await API.get("/api/movies");
-    setData(result.data);
-    setFilteredData(result.data);
-  };
-
   const getTag = async () => {
     const result = await API.get("/api/Genres");
     setData1(result.data);
   };
 
+  const searchData = async () => {
+    if (!searchValue) {
+      setData([]);
+      return;
+    }
+    const result = await searchApi(searchValue);
+    setData(result.data);
+    setFilteredData(result.data);
+    console.log("result", result.data);
+  };
+
+  const searchApi = async () => {
+    const result = await API.get("/api/movies", {
+      params: {
+        search: searchValue,
+      },
+    });
+    return result;
+  };
+
   useEffect(() => {
     getTag();
-    getData();
+    searchApi();
+    searchData();
   }, []);
+
+  const { Title } = Typography;
 
   const siderStyle = {
     textAlign: "center",
@@ -56,13 +80,18 @@ const App = () => {
   const currentMovies = filteredData.slice(indexOfFirstMovie, indexOfLastMovie);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   return (
     <div style={{ backgroundColor: "white" }}>
       <main style={{ justifyContent: "space-between" }}>
         <SliderShow style={{ justify: "center" }} />
         <Row justify="center">
           <Col xs={24} sm={24} md={24} lg={20} xl={20} xxl={20}>
+            <Card style={{ color: "black" }}>
+              <Title>
+                Search Result:{" "}
+                <span style={{ color: "#003eb3" }}>{searchValue}</span>
+              </Title>
+            </Card>
             <Row
               justify="start"
               gutter={[16, 16]}
@@ -78,7 +107,6 @@ const App = () => {
                   />
                 </Col>
               ))}
-
               <Row justify="center" className="w-full">
                 <Col>
                   <Pagination
