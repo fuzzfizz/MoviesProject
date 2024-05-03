@@ -13,6 +13,14 @@ const MoviePage = ({ params }) => {
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
+  const [cetargory, setCetargory] = useState([]);
+
+  const getcetargory = async () => {
+    const result = await API.get("/api/movies");
+    setCetargory(result.data);
+    console.log(result.data);
+  };
+
   const getData = async (movieName) => {
     const result = await API.get(`/api/movies/${movieName}`);
     setData(result.data);
@@ -44,27 +52,19 @@ const MoviePage = ({ params }) => {
       }
     );
     setData2(result.data.keywords);
-    console.log(result.data.keywords?.name);
+    // console.log(result.data.keywords?.name);
   };
   const getPopmovies = async () => {
-    const result = await axios.get(
-      `https://api.themoviedb.org/3/movie/popular`,
-      {
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNzdiOGQyYjVhNGU5MzA1N2ZiMTFhYzNjMTA5MDA4YiIsInN1YiI6IjY2MDRmMGIwYWFmZWJkMDEyZjE2ZmQxYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.QvaIlggc1zm5Y2bjERMQm3O9sTkt63m34YgFJmO35Po",
-        },
-      }
-    );
-    setData3(result.data.results);
-    console.log("data3", result.data.results);
+    const result = await API.get("/api/movies");
+    setData3(result.data);
+    console.log("data", result.data.results);
   };
   useEffect(() => {
     getData(params.id);
     getVideo();
-    getKeyword();
+    // getKeyword();
     getPopmovies();
+    getcetargory();
   }, []);
 
   return (
@@ -128,16 +128,16 @@ const MoviePage = ({ params }) => {
             <Rate disabled defaultValue={`${data.vote_average / 2}`} />
           </Title>
         </Col>
-        <Col span={24} style={{ paddingTop: "0px", paddingLeft: "2.5rem" }}>
+        {/* <Col span={24} style={{ paddingTop: "0px", paddingLeft: "2.5rem" }}>
           <Title level={2} style={{ color: "black", margin: "0px" }}>
             keywords:{"  "}
             {data2?.map((movie, index) => (
-              <Tag key={movie?.name} color="default">
+              <Tag key={index} color="default">
                 {movie?.name}
               </Tag>
             ))}
           </Title>
-        </Col>
+        </Col> */}
         <Col
           key={data.id}
           span={24}
